@@ -1,10 +1,6 @@
 # DeepAtles
 An attention network for predicting peptide lengths (and other features) from mass spectrometry data.
-
-
-## SpeCollate
-
-SpeCollate is the first Deep Learning-based peptide-spectrum similarity network. It allows searching a peptide database by generating embeddings for both mass spectra and database peptides. K-nearest neighbor search is performed on a GPU in the embedding space to find the k (usually k=5) nearest peptide for each spectrum.
+DeepAtles is the first Deep Learning-based peptide-spectrum similarity network. It allows searching a peptide database by generating embeddings for both mass spectra and database peptides. K-nearest neighbor search is performed on a GPU in the embedding space to find the k (usually k=5) nearest peptide for each spectrum.
 
 
 ### Network Architecture
