@@ -21,6 +21,9 @@ from src.atlespredict import (
 )
 from src.atlestrain import model
 
+if not os.path.exists("output_dir"):
+    os.mkdir("output_dir")
+
 
 def run_atles(rank, spec_loader):
     model_ = model.Net().to(rank)
@@ -31,7 +34,7 @@ def run_atles(rank, spec_loader):
     #     )['model_state_dict'])
     model_.load_state_dict(
         torch.load(
-            "/lclhome/mtari008/DeepAtles/atles-out/1382/models/nist-massive-deepnovo-mass-ch-1382-c8mlqbq7-157.pt"
+            config.get_config(key="model_name", section="search")
         )["model_state_dict"]
     )
     model_ = model_.module
@@ -96,8 +99,8 @@ def run_specollate_par(rank, world_size):
     # os.environ['MASTER_PORT'] = '12350'
     # dist.init_process_group(backend='nccl', world_size=1, rank=0)
     # model_name = "512-embed-2-lstm-SnapLoss2D-80k-nist-massive-no-mc-semi-randbatch-62.pt" # 28.8k
-    model_name = "512-embed-2-lstm-SnapLoss2D-80k-nist-massive-no-mc-semi-r2r-18.pt"  # 28.975k
-    model_name = "512-embed-2-lstm-SnapLoss2D-80k-nist-massive-no-mc-semi-r2r2r-22.pt"
+    # model_name = "512-embed-2-lstm-SnapLoss2D-80k-nist-massive-no-mc-semi-r2r-18.pt"  # 28.975k
+    model_name = config.get_config(key="specollate_model_path", section="search")
     print("Using model: {}".format(model_name))
     snap_model = specollate_model.Net(vocab_size=30, embedding_dim=512, hidden_lstm_dim=512, lstm_layers=2).to(rank)
     snap_model = nn.parallel.DistributedDataParallel(snap_model, device_ids=[rank])
@@ -110,7 +113,9 @@ def run_specollate_par(rank, world_size):
     # snap_model.load_state_dict(
     #     torch.load("models/hcd/512-embed-2-lstm-SnapLoss2D-inputCharge-80k-nist-massive-116.pt")["model_state_dict"]
     # )
-    snap_model.load_state_dict(torch.load("specollate-model/{}".format(model_name))["model_state_dict"])
+    # snap_model.load_state_dict(torch.load("specollate-model/{}".format(model_name))["model_state_dict"])
+    snap_model.load_state_dict(torch.load("{}".format(model_name))["model_state_dict"])
+
     snap_model = snap_model.module
     snap_model.eval()
     print(snap_model)

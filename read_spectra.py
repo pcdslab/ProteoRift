@@ -8,6 +8,7 @@ from pathlib import Path
 
 import numpy as np
 from sklearn.model_selection import train_test_split
+import argparse
 
 from src.atlesconfig import config
 
@@ -509,10 +510,17 @@ def preprocess_mgfs_unlabelled(mgf_dir, out_dir):
 
 
 if __name__ == "__main__":
-    # mgf_dir = config.get_config(section='input', key='mgf_dir')
-    # prep_dir = config.get_config(section='input', key='prep_dir')
-    # preprocess_mgfs(mgf_dir, prep_dir)
 
-    mgf_dir = config.get_config(section="search", key="mgf_dir")
-    prep_dir = config.get_config(section="search", key="prep_path")
-    preprocess_mgfs_unlabelled(mgf_dir, prep_dir)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-t", "--type", help="Labeled or Unlabeled", default="u")
+    input_params = parser.parse_args()
+    
+    
+    if input_params.type == "l":
+        mgf_dir = config.get_config(section='input', key='mgf_dir')
+        prep_dir = config.get_config(section='input', key='prep_dir')
+        preprocess_mgfs(mgf_dir, prep_dir)
+    else:
+        mgf_dir = config.get_config(section="search", key="mgf_dir")
+        prep_dir = config.get_config(section="search", key="prep_path")
+        preprocess_mgfs_unlabelled(mgf_dir, prep_dir)

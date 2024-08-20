@@ -17,6 +17,7 @@ from src.atlesconfig import config, wandbsetup
 from src.atlestrain import dataset, model, trainmodel
 
 torch.manual_seed(1)
+os.environ['SLURM_JOB_ID'] = '1'
 
 # with redirect_output("deepSNAP_redirect.txtS"):
 train_loss = []
@@ -28,8 +29,9 @@ test_accuracy = []
 def run_par(rank, world_size):
     model_name = "nist-massive-deepnovo-mass-ch"  # first k is spec size second is batch size
     print("Training {}.".format(model_name))
-    wandb.init(project="deepatles", entity="pcds")
+    wandb.init(project="proteorift")
     wandb.run.name = "{}-{}-{}".format(model_name, os.environ["SLURM_JOB_ID"], wandb.run.id)
+    # wandb.run.name = "{}-{}-{}".format(model_name, 1, wandb.run.id)
     wandbsetup.set_wandb_config(wandb)
 
     setup(rank, world_size)
@@ -84,10 +86,10 @@ def run_par(rank, world_size):
 
     optimizer = optim.Adam(model_.parameters(), lr=lr, weight_decay=weight_decay)
     # model_, optimizer = apex.amp.initialize(model_, optimizer, opt_level="O2")
-    model_ = nn.parallel.DistributedDataParallel(model_)
+    model_ = nn.parallel.DistributedDataParallel(model_, find_unused_parameters=True)
     # model_.load_state_dict(torch.load("./models/attn-2-199.pt")["model_state_dict"])
 
-    scaler = torch.cuda.amp.GradScaler()
+    scaler = torch.amp.GradScaler("cuda")
 
     wandb.watch(model_)
     for epoch in range(num_epochs):
@@ -103,6 +105,9 @@ def run_par(rank, world_size):
         dist.barrier()
 
         if l_epoch % 1 == 0 and rank == 0:
+            write_parent_dir = "atles-out/" + os.environ["SLURM_JOB_ID"] + "/models"
+            if not os.path.exists(write_parent_dir):
+                os.makedirs(write_parent_dir, exist_ok=True)
             torch.save(
                 {
                     "epoch": l_epoch,

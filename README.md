@@ -51,7 +51,7 @@ Two different executables are included in the downloadable specollate.tar.gz fil
 
 The below sections explain the setup for retraining the model.
 
-### Prerequisites
+### 1. Prerequisites
 
 - A Computer with Ubuntu 16.04 (or later) or CentOS 8.1 (or later).
 - At least 120GBs of system memory and 10 CPU cores.
@@ -59,48 +59,46 @@ The below sections explain the setup for retraining the model.
 - OpenMS tool for creating custom peptide database. (Optional)
 - Crux for FDR analysis using its percolator option.
 
-### Retrain the Model
+#### 1.1 Create Conda Enviornment
+`conda env create --file proteorift_env.yml`
+#### 1.2 Activate Enviornment
+`conda activate proteorift`
 
-1. Download the [specollate.tar.gz](https://drive.google.com/uc?export=download&id=1iAR4a6qQQyS2pDFMRqCd7Jaofsmxwdsp) file and extract the contents using the following command:  
-`tar -xzf specollate.tar.gz`  
-The extracted directory contains multiple files, including:
-    - `specollate-train`: This is the executable for training SpeCollate.
-    - `specollate-search`: This is the executable for database search.
-    - `config.ini`: Parameter file for training and searching.
-    - `models (dir)`: Contains the pre-trained model. New models will also be stored here.
-    - `percolator (dir)`: Percolator input (.pin) files be placed here after the search is complete.
 
-2. Download the preprocessed data for training ([here](https://drive.google.com/uc?export=download&id=10bZbMdc2eN_l4ToJd6ruzNX7t6wIUfHw)) and extract the contents using:  
-`tar -xzf specollate-training-data.tar.gz`
+### 2. Retrain the Model
+To train the DeepAtles model.
 
-3. Open the config.ini file from step 1 in your favorite text editor and set the following parameters:
-    - `in_tensor_dir` in [preprocess] section: Absolute path of the decompressed file from step 2.
-    - `model_name` in [ml] section: The name by which to wish to save the trained model file.
+1. Prepare the spectra data (mgf format).
+2. Open the config.ini file in your favorite text editor and set the following parameters:
+    - `mgf_dir`: Absolute path of the mgf files.
+    - `prep_dir` Absolute path to the directory where preprocessed mgf files will be saved.
     - other parameters in the [ml] section: You can adjust different hyperparameters in the [ml] section, e.g., learning_rate, dropout, etc.
+3. Setup the [wandb](https://wandb.ai/site) account. Create a project name `proteorift`. Then login to the project using `wandb login.` It would store the logs for training.
+4. Run `python read_spectra.py -t l`. It would preprocess the spectra files and split them (training, validation, test) and place in the prep_dir.
+5. Run the specollate_train file `python run_train.py`. The model weights would be saved in an output dir.
 
-4. Execute the specollate_train file.  
-`./specollate_train`
+### 3. Database Search
 
-### Database Search
+Our pipeline is using two models. You can train specollate model using [Specollate](https://pcdslab.github.io/specollate-page/). You can train the Deep Atles model using [Retrain the model]() Section. 
 
-1. Same as step 1 in the **Previous** section.
-2. Download one of the [mgf files](https://drive.google.com/drive/folders/1dvvbYjtz9PrFcMzB-VvtGbrWNX-hl6Io?usp=sharing). Or you can use your own spectra files in mgf format.
-3. Download the [human peptide database](https://drive.google.com/uc?export=download&id=1pOBYkCFl66Yk1DjSIw6l9RRi7f6iSXSf). You can provide your own peptide database file created using the Digestor tool provided by [OpenMS](https://www.openms.de/download/openms-binaries/).
+You can download the weights for both models [here]().
+
+1. Use mgf files for spectra in `sample_data`. Or you can use your own spectra files in mgf format.
+2. Download .fasta [file]() for peptide database and place in sample_data/peptide_database. You can provide your own peptide database file created using the Digestor tool provided by [OpenMS](https://www.openms.de/download/openms-binaries/).
+3. Download/Train the model mentioned above.
 4. Set the following parameters in the [search] section of the `config.ini` file:
-    - `model_name`: Name of the model to be used. The model should be in the `/specollate-model` directory.
+    - `model_name`: Absolute path to the DeepAtles model.
+    - `specollate_model_path`:  Absolute path to the specollate model. 
     - `mgf_dir`: Absolute path to the directory containing mgf files to be searched.
     - `prep_dir`: Absolute path to the directory where preprocessed mgf files will be saved.
     - `pep_dir`: Absolute path to the directory containing peptide database.
     - `out_pin_dir`: Absolute path to a directory where percolator pin files will be saved. The directory must exist; otherwise, the process will exit with an error.
-    - `index`: Absolute path to a directory where index file ares saved.
-    - Set database search parameters e.g. `precursor_mass_tolerance` etc.
+    - Set database search parameters
+5. Run `python read_spectra.py -t u`. It would preprocess the spectra files and place in the prep_dir.
 
-5. Execute the specollate_search file:  
-`./run_search.py`  
-If you want to use the preprocessed spectra from a previous run, use the `-p False` flag:  
-`./run_search.py -p False`
+6. Run `python run_search.py`.
 
-6. Once the search is complete; you can analyze the percolator files using the crux percolator tool:
+7. Once the search is complete; you can analyze the percolator files using the crux percolator tool:
 ```shell
 cd <out_pin_dir>
 crux percolator target.pin decoy.pin --list-of-files T --overwrite T
