@@ -1,6 +1,6 @@
 # ProteoRift
 An attention network for predicting peptide lengths (and other features) from mass spectrometry data.
-DeepAtles is the first Deep Learning-based peptide-spectrum similarity network. It allows searching a peptide database by generating embeddings for both mass spectra and database peptides. K-nearest neighbor search is performed on a GPU in the embedding space to find the k (usually k=5) nearest peptide for each spectrum.
+Proteorift is the first Deep Learning-based peptide-spectrum similarity network. It allows searching a peptide database by generating embeddings for both mass spectra and database peptides. K-nearest neighbor search is performed on a GPU in the embedding space to find the k (usually k=5) nearest peptide for each spectrum.
 
 
 ### Network Architecture
@@ -66,7 +66,7 @@ The below sections explain the setup for retraining the model.
 
 
 ### 2. Retrain the Model
-To train the DeepAtles model.
+To train the proteorift model.
 
 1. Prepare the spectra data (mgf format).
 2. Open the config.ini file in your favorite text editor and set the following parameters:
@@ -79,15 +79,14 @@ To train the DeepAtles model.
 
 ### 3. Database Search
 
-Our pipeline is using two models. You can train specollate model using [Specollate](https://pcdslab.github.io/specollate-page/). You can train the Deep Atles model using [Retrain the model]() Section. 
+Our pipeline is using two models. You can train specollate model using [Specollate](https://github.com/pcdslab/SpeCollate). You can train the proteorift model using Section 2. Or you can download the weights for both models [here]().
 
-You can download the weights for both models [here]().
 
-1. Use mgf files for spectra in `sample_data`. Or you can use your own spectra files in mgf format.
-2. Download .fasta [file]() for peptide database and place in sample_data/peptide_database. You can provide your own peptide database file created using the Digestor tool provided by [OpenMS](https://www.openms.de/download/openms-binaries/).
-3. Download/Train the model mentioned above.
+1. Use mgf files for spectra in `sample_data/spectra`. Or you can use your own spectra files in mgf format.
+2. Use human peptidome subset in `sample_data/peptide_database`. You can provide your own peptide database file created using the Digestor tool provided by [OpenMS](https://www.openms.de/download/openms-binaries/).
+3. Download the weights for specollate and proteorift model [here]().
 4. Set the following parameters in the [search] section of the `config.ini` file:
-    - `model_name`: Absolute path to the DeepAtles model.
+    - `model_name`: Absolute path to the proteorift model.
     - `specollate_model_path`:  Absolute path to the specollate model. 
     - `mgf_dir`: Absolute path to the directory containing mgf files to be searched.
     - `prep_dir`: Absolute path to the directory where preprocessed mgf files will be saved.
@@ -96,7 +95,7 @@ You can download the weights for both models [here]().
     - Set database search parameters
 5. Run `python read_spectra.py -t u`. It would preprocess the spectra files and place in the prep_dir.
 
-6. Run `python run_search.py`.
+6. Run `python run_search.py`. It would generate the embeddings for spectra and peptides and it would predict the filters for spectra and perform the search. It would generate the output(e.g target.pin, decoy.pin).
 
 7. Once the search is complete; you can analyze the percolator files using the crux percolator tool:
 ```shell
