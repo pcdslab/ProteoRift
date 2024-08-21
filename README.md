@@ -28,7 +28,7 @@ The below sections explain the setup for running the database search (on already
 `conda activate proteorift`
 
 ### Database Search
-Our end-to-end pipeline uses two models [Specollate](https://github.com/pcdslab/SpeCollate) and ProteoRift. You can download the weights for both models [here](https://github.com/pcdslab/ProteoRift/releases/tag/V1.0.0) under the Assets section.
+Our end-to-end pipeline uses two models [Specollate](https://github.com/pcdslab/SpeCollate) and ProteoRift. 
 
 1. Use mgf files for spectra in `sample_data/spectra`. Or you can use your own spectra files in mgf format.
 2. Use human peptidome subset in `sample_data/peptide_database`. You can provide your own peptide database file created using the Digestor tool provided by [OpenMS](https://www.openms.de/download/openms-binaries/).
