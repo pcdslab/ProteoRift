@@ -34,8 +34,8 @@ Our end-to-end pipeline uses two models [Specollate](https://github.com/pcdslab/
 2. Use human peptidome subset in `sample_data/peptide_database`. You can provide your own peptide database file created using the Digestor tool provided by [OpenMS](https://www.openms.de/download/openms-binaries/).
 3. Download the weights for specollate and proteorift model [here](https://github.com/pcdslab/ProteoRift/releases/tag/V1.0.0) under the Assets section.
 4. Set the following parameters in the [search] section of the `config.ini` file:
-    - `model_name`: Absolute path to the proteorift model.
-    - `specollate_model_path`:  Absolute path to the specollate model. 
+    - `model_name`: Absolute path to the proteorift model (called *proteorift_model_weights.pt* that you downloaded from [here](https://github.com/pcdslab/ProteoRift/releases/tag/V1.0.0) under the Assets section).
+    - `specollate_model_path`:  Absolute path to the specollate model (called *specollate_model_weights.pt* that you downloaded from [here](https://github.com/pcdslab/ProteoRift/releases/tag/V1.0.0) under the Assets section). 
     - `mgf_dir`: Absolute path to the directory containing mgf files to be searched.
     - `prep_dir`: Absolute path to the directory where preprocessed mgf files will be saved.
     - `pep_dir`: Absolute path to the directory containing peptide database.
