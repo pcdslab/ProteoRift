@@ -25,17 +25,6 @@ The below sections explain the setup for retraining the model.
 #### 1.2 Activate Enviornment
 `conda activate proteorift`
 
-### 2. Retrain the Model (In general you dont need this)
-You can retrain the ProteoRift model if you wish. However a trained model is available and you can perform your database search by following [next section](#Database-Search).
-1. Prepare the spectra data (mgf format).
-2. Open the config.ini file in your favorite text editor and set the following parameters:
-    - `mgf_dir`: Absolute path of the mgf files.
-    - `prep_dir` Absolute path to the directory where preprocessed mgf files will be saved.
-    - other parameters in the [ml] section: You can adjust different hyperparameters in the [ml] section, e.g., learning_rate, dropout, etc.
-3. Setup the [wandb](https://wandb.ai/site) account. Create a project name `proteorift`. Then login to the project using `wandb login.` It would store the logs for training.
-4. Run `python read_spectra.py -t l`. It would preprocess the spectra files and split them (training, validation, test) and place in the prep_dir.
-5. Run the specollate_train file `python run_train.py`. The model weights would be saved in an output dir.
-
 ### Database Search
 Our pipeline is using two models. You can train specollate model using [Specollate](https://github.com/pcdslab/SpeCollate). You can train the proteorift model using Section 2. Or you can download the weights for both models [here]().
 
@@ -57,3 +46,15 @@ Our pipeline is using two models. You can train specollate model using [Specolla
 cd <out_pin_dir>
 crux percolator target.pin decoy.pin --list-of-files T --overwrite T
 ```
+
+### Retrain the Model (In general you dont need this)
+You can retrain the ProteoRift model if you wish. 
+1. Prepare the spectra data (mgf format).
+2. Open the config.ini file in your favorite text editor and set the following parameters:
+    - `mgf_dir`: Absolute path of the mgf files.
+    - `prep_dir` Absolute path to the directory where preprocessed mgf files will be saved.
+    - other parameters in the [ml] section: You can adjust different hyperparameters in the [ml] section, e.g., learning_rate, dropout, etc.
+3. Setup the [wandb](https://wandb.ai/site) account. Create a project name `proteorift`. Then login to the project using `wandb login.` It would store the logs for training.
+4. Run `python read_spectra.py -t l`. It would preprocess the spectra files and split them (training, validation, test) and place in the prep_dir.
+5. Run the specollate_train file `python run_train.py`. The model weights would be saved in an output dir.
+
