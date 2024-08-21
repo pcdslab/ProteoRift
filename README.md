@@ -11,18 +11,21 @@ Full documentation and further functionality are still a work in progress. A ste
 
 
 ## Step-by-Step HOW TO
-The below sections explain the setup for retraining the model.
+The below sections explain the setup for running the database search (on already trained model) or retraining the model using your own data.
 
-### 1. Prerequisites
+### Fork the repository
+(1) Fork the repository to your own account.
+(2) Clone your fork to your machine. 
 
+### Prerequisites
 - A Computer with Ubuntu 16.04 (or later) or CentOS 8.1 (or later).
 - At least 120GBs of system memory and 10 CPU cores.
 - Cuda enabled GPU with at least 12 GBs of memory. Cuda Toolkit 10.0 (or later).
 - OpenMS tool for creating custom peptide database. (Optional)
 - Crux for FDR analysis using its percolator option.
-#### 1.1 Create Conda Enviornment
+#### Create Conda Enviornment
 `conda env create --file proteorift_env.yml`
-#### 1.2 Activate Enviornment
+#### Activate Enviornment
 `conda activate proteorift`
 
 ### Database Search
