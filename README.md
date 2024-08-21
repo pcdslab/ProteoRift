@@ -15,10 +15,8 @@ The below sections explain the setup for running the database search (on already
 
 ### Prerequisites
 - A Computer with Ubuntu 16.04 (or later) or CentOS 8.1 (or later).
-- At least 120GBs of system memory and 10 CPU cores.
-- Cuda enabled GPU with at least 12 GBs of memory. Cuda Toolkit 10.0 (or later).
+- Cuda enabled GPU with at least 12 GBs of memory. 
 - OpenMS tool for creating custom peptide database. (Optional)
-- Crux for FDR analysis using its percolator option.
 
 ### Fork the repository
 - Fork the repository to your own account.
