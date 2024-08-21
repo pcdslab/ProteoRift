@@ -26,7 +26,7 @@ The below sections explain the setup for retraining the model.
 `conda activate proteorift`
 
 ### 2. Retrain the Model
-You can retrain the ProteoRift model if you wish. However a trained model is available and you can perform your database search by following [section 3](#3.Database-Search)
+You can retrain the ProteoRift model if you wish. However a trained model is available and you can perform your database search by following [section 3](#3.-Database-Search)
 1. Prepare the spectra data (mgf format).
 2. Open the config.ini file in your favorite text editor and set the following parameters:
     - `mgf_dir`: Absolute path of the mgf files.
