@@ -15,10 +15,8 @@ The below sections explain the setup for running the database search (on already
 
 ### Prerequisites
 - A Computer with Ubuntu 16.04 (or later) or CentOS 8.1 (or later).
-- At least 120GBs of system memory and 10 CPU cores.
-- Cuda enabled GPU with at least 12 GBs of memory. Cuda Toolkit 10.0 (or later).
+- Cuda enabled GPU with at least 12 GBs of memory. 
 - OpenMS tool for creating custom peptide database. (Optional)
-- Crux for FDR analysis using its percolator option.
 
 ### Fork the repository
 - Fork the repository to your own account.
@@ -30,11 +28,11 @@ The below sections explain the setup for running the database search (on already
 `conda activate proteorift`
 
 ### Database Search
-Our end-to-end pipeline uses two models [Specollate](https://github.com/pcdslab/SpeCollate) and ProteoRift. You can download the weights for both models [here]().
+Our end-to-end pipeline uses two models [Specollate](https://github.com/pcdslab/SpeCollate) and ProteoRift. You can download the weights for both models [here](https://github.com/pcdslab/ProteoRift/releases/tag/V1.0.0) under the Assets section.
 
 1. Use mgf files for spectra in `sample_data/spectra`. Or you can use your own spectra files in mgf format.
 2. Use human peptidome subset in `sample_data/peptide_database`. You can provide your own peptide database file created using the Digestor tool provided by [OpenMS](https://www.openms.de/download/openms-binaries/).
-3. Download the weights for specollate and proteorift model [here]().
+3. Download the weights for specollate and proteorift model [here](https://github.com/pcdslab/ProteoRift/releases/tag/V1.0.0) under the Assets section.
 4. Set the following parameters in the [search] section of the `config.ini` file:
     - `model_name`: Absolute path to the proteorift model.
     - `specollate_model_path`:  Absolute path to the specollate model. 
