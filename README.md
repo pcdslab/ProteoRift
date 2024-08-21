@@ -26,7 +26,7 @@ The below sections explain the setup for retraining the model.
 `conda activate proteorift`
 
 ### 2. Retrain the Model
-You can retrain the ProteoRift model if you wish. However a trained model is available and you can perform your database search by following [database search section](# 3.-Database-Search)
+You can retrain the ProteoRift model if you wish. However a trained model is available and you can perform your database search by following [database search section](#Database-Search)
 1. Prepare the spectra data (mgf format).
 2. Open the config.ini file in your favorite text editor and set the following parameters:
     - `mgf_dir`: Absolute path of the mgf files.
@@ -36,7 +36,7 @@ You can retrain the ProteoRift model if you wish. However a trained model is ava
 4. Run `python read_spectra.py -t l`. It would preprocess the spectra files and split them (training, validation, test) and place in the prep_dir.
 5. Run the specollate_train file `python run_train.py`. The model weights would be saved in an output dir.
 
-### 3. Database Search
+### Database Search
 Our pipeline is using two models. You can train specollate model using [Specollate](https://github.com/pcdslab/SpeCollate). You can train the proteorift model using Section 2. Or you can download the weights for both models [here]().
 
 1. Use mgf files for spectra in `sample_data/spectra`. Or you can use your own spectra files in mgf format.
