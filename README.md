@@ -60,3 +60,13 @@ You can retrain the ProteoRift model if you wish.
 4. Run `python read_spectra.py -t l`. It would preprocess the spectra files and split them (training, validation, test) and place in the prep_dir.
 5. Run the specollate_train file `python run_train.py`. The model weights would be saved in an output dir.
 
+### Uncertainty Analysis
+To perform the uncertainty Analysis, open notebook `uncertainty_analysis/uncertainty-analysis-specs.ipynb`.
+
+1. Set the following parameters in the notebook:
+
+ - `model_path`: Absolute path to the specollate model weights (called *specollate_model_weights.pt* that you downloaded from [here](https://github.com/pcdslab/ProteoRift/releases/tag/V1.0.0) under the Assets section) 
+ - `in_tensor_dir`: Path to your data folder, it should contain your data after preprocessing (Review the comments in the notebook to identify the files generated after preprocessing.)
+2. Install dependencies specified in the notebook
+3. Run the notebook 
+
