@@ -9,25 +9,37 @@ If you use ProteoRift in your work, please cite the following publications:
 
 Full documentation and further functionality are still a work in progress. A step-by-step how-to for training or running our trained version of ProteoRift on your data is available below. Please check back soon for an updated tool!
 
+## Time of Execution and Speedup
 
-## Step-by-Step HOW TO
-The below sections explain the setup for running the database search (on already trained model) or retraining the model using your own data.
+![alt text](<toe_image.png>)
 
-### Prerequisites
+
+<!-- # Step-by-Step HOW TO
+The below sections explain the setup for running the database search (on already trained model) or retraining the model using your own data. -->
+
+## System Requirements
 - A Computer with Ubuntu 16.04 (or later) or CentOS 8.1 (or later).
-- Cuda enabled GPU with at least 12 GBs of memory. 
+- Cuda enabled GPU with at least 12 GBs of memory.
 - OpenMS tool for creating custom peptide database. (Optional)
+
+## Installation Guide
+
+### Install Anaconda
+[Step by Step Guide to Install Anaconda](https://docs.anaconda.com/anaconda/install/)
 
 ### Fork the repository
 - Fork the repository to your own account.
 - Clone your fork to your machine. 
 
-#### Create Conda Enviornment
-`conda env create --file proteorift_env.yml`
-#### Activate Enviornment
+### Create Conda Enviornment
+`cd ProteoRift`
+
+`conda env create --file proteorift_env.yml` (It would take some minutes to install dependencis)
+### Activate Enviornment
 `conda activate proteorift`
 
-### Database Search
+## Demo (Database Search)
+
 Our end-to-end pipeline uses two models [Specollate](https://github.com/pcdslab/SpeCollate) and ProteoRift. 
 
 1. Use mgf files for spectra in `sample_data/spectra`. Or you can use your own spectra files in mgf format.
@@ -49,7 +61,8 @@ cd <out_pin_dir>
 crux percolator target.pin decoy.pin --list-of-files T --overwrite T
 ```
 
-### Retrain the Model (In general you dont need this)
+## Retrain the Model 
+
 You can retrain the ProteoRift model if you wish. 
 1. Prepare the spectra data (mgf format).
 2. Open the config.ini file in your favorite text editor and set the following parameters:
@@ -60,7 +73,7 @@ You can retrain the ProteoRift model if you wish.
 4. Run `python read_spectra.py -t l`. It would preprocess the spectra files and split them (training, validation, test) and place in the prep_dir.
 5. Run the specollate_train file `python run_train.py`. The model weights would be saved in an output dir.
 
-### Uncertainty Analysis
+## Uncertainty Analysis
 To perform the uncertainty Analysis, open notebook `uncertainty_analysis/uncertainty-analysis-specs.ipynb`.
 
 1. Set the following parameters in the notebook:
