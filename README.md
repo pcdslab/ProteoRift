@@ -9,9 +9,6 @@ If you use ProteoRift in your work, please cite the following publications:
 
 Full documentation and further functionality are still a work in progress. A step-by-step how-to for training or running our trained version of ProteoRift on your data is available below. Please check back soon for an updated tool!
 
-## Time of Execution
-For a 3.9GB database, our proposed method completes the search in 1.65 hours with filters. For a larger 31GB database, the search takes 11.9 hours with filters.
-
 
 <!-- # Step-by-Step HOW TO
 The below sections explain the setup for running the database search (on already trained model) or retraining the model using your own data. -->
@@ -65,6 +62,8 @@ The database search would output two files (target.pin, decoy.pin). `target.pin`
 cd <out_pin_dir>
 crux percolator target.pin decoy.pin --list-of-files T --overwrite T
 ```
+##### Time of Execution
+Execution time is dependent on many factors including your machines, size of the data, size of the spectra, and what kind of search-space reduction was achieved. As an example, for a 3.9GB database our proposed method completes the search in 1.65 hours with filters. 
 
 ## Uncertainty Analysis
 To perform the uncertainty Analysis, open notebook `uncertainty_analysis/uncertainty-analysis-specs.ipynb`.
