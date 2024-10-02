@@ -9,25 +9,36 @@ If you use ProteoRift in your work, please cite the following publications:
 
 Full documentation and further functionality are still a work in progress. A step-by-step how-to for training or running our trained version of ProteoRift on your data is available below. Please check back soon for an updated tool!
 
+## Time of Execution
+For a 3.9GB database, our proposed method completes the search in 1.65 hours with filters. For a larger 31GB database, the search takes 11.9 hours with filters.
 
-## Step-by-Step HOW TO
-The below sections explain the setup for running the database search (on already trained model) or retraining the model using your own data.
 
-### Prerequisites
+<!-- # Step-by-Step HOW TO
+The below sections explain the setup for running the database search (on already trained model) or retraining the model using your own data. -->
+
+## System Requirements
 - A Computer with Ubuntu 16.04 (or later) or CentOS 8.1 (or later).
-- Cuda enabled GPU with at least 12 GBs of memory. 
+- Cuda enabled GPU with at least 12 GBs of memory.
 - OpenMS tool for creating custom peptide database. (Optional)
+
+## Installation Guide
+
+### Install Anaconda
+[Step by Step Guide to Install Anaconda](https://docs.anaconda.com/anaconda/install/)
 
 ### Fork the repository
 - Fork the repository to your own account.
 - Clone your fork to your machine. 
 
-#### Create Conda Enviornment
-`conda env create --file proteorift_env.yml`
-#### Activate Enviornment
+### Create Conda Enviornment
+`cd ProteoRift`
+
+`conda env create --file proteorift_env.yml` (It would take some minutes to install dependencis)
+### Activate Enviornment
 `conda activate proteorift`
 
-### Database Search
+## Demo (Database Search)
+
 Our end-to-end pipeline uses two models [Specollate](https://github.com/pcdslab/SpeCollate) and ProteoRift. 
 
 1. Use mgf files for spectra in `sample_data/spectra`. Or you can use your own spectra files in mgf format.
@@ -43,13 +54,31 @@ Our end-to-end pipeline uses two models [Specollate](https://github.com/pcdslab/
     - Set database search parameters
 5. Run `python read_spectra.py -t u`. It would preprocess the spectra files and place in the prep_dir.
 6. Run `python run_search.py`. It would generate the embeddings for spectra and peptides and it would predict the filters for spectra and perform the search. It would generate the output(e.g target.pin, decoy.pin).
-7. Once the search is complete; you can analyze the percolator files using the crux percolator tool:
+
+#### Expected Output
+The database search would output two files (target.pin, decoy.pin). `target.pin` contains the information about Target Peptide Spectrum Match. `decoy.pin` contains the information about Decoy Peptide Spectrum Match. Both .pin file would have the features given below for Peptide-Spectrum Match.
+
+![alt text](PSM.png)
+
+ Once the search is complete and .pin are generated; you can analyze the percolator files using the crux percolator tool:
 ```shell
 cd <out_pin_dir>
 crux percolator target.pin decoy.pin --list-of-files T --overwrite T
 ```
 
-### Retrain the Model (In general you dont need this)
+## Uncertainty Analysis
+To perform the uncertainty Analysis, open notebook `uncertainty_analysis/uncertainty-analysis-specs.ipynb`.
+
+1. Set the following parameters in the notebook:
+
+ - `model_path`: Absolute path to the specollate model weights (called *specollate_model_weights.pt* that you downloaded from [here](https://github.com/pcdslab/ProteoRift/releases/tag/V1.0.0) under the Assets section) 
+ - `in_tensor_dir`: Path to your data folder, it should contain your data after preprocessing (Review the comments in the notebook to identify the files generated after preprocessing.)
+2. Install dependencies specified in the notebook
+3. Run the notebook 
+
+
+## Retrain the Model 
+
 You can retrain the ProteoRift model if you wish. 
 1. Prepare the spectra data (mgf format).
 2. Open the config.ini file in your favorite text editor and set the following parameters:
@@ -60,13 +89,5 @@ You can retrain the ProteoRift model if you wish.
 4. Run `python read_spectra.py -t l`. It would preprocess the spectra files and split them (training, validation, test) and place in the prep_dir.
 5. Run the specollate_train file `python run_train.py`. The model weights would be saved in an output dir.
 
-### Uncertainty Analysis
-To perform the uncertainty Analysis, open notebook `uncertainty_analysis/uncertainty-analysis-specs.ipynb`.
 
-1. Set the following parameters in the notebook:
-
- - `model_path`: Absolute path to the specollate model weights (called *specollate_model_weights.pt* that you downloaded from [here](https://github.com/pcdslab/ProteoRift/releases/tag/V1.0.0) under the Assets section) 
- - `in_tensor_dir`: Path to your data folder, it should contain your data after preprocessing (Review the comments in the notebook to identify the files generated after preprocessing.)
-2. Install dependencies specified in the notebook
-3. Run the notebook 
 
