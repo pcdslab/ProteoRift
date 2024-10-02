@@ -9,9 +9,8 @@ If you use ProteoRift in your work, please cite the following publications:
 
 Full documentation and further functionality are still a work in progress. A step-by-step how-to for training or running our trained version of ProteoRift on your data is available below. Please check back soon for an updated tool!
 
-## Time of Execution and Speedup
-
-![alt text](<toe_image.png>)
+## Time of Execution
+For a 3.9GB database, our proposed method completes the search in 1.65 hours with filters. For a larger 31GB database, the search takes 11.9 hours with filters.
 
 
 <!-- # Step-by-Step HOW TO
