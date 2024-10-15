@@ -11,6 +11,7 @@ from sklearn.model_selection import train_test_split
 import argparse
 
 from src.atlesconfig import config
+from os.path import dirname, join
 
 
 def create_out_dir(dir_path, exist_ok=True):
@@ -509,11 +510,18 @@ def preprocess_mgfs_unlabelled(mgf_dir, out_dir):
     np.save(join(out_dir, "stds.npy"), stds)
 
 
-if __name__ == "__main__":
-
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("-t", "--type", help="Labeled or Unlabeled", default="u")
+    parser.add_argument("-c", "--config", help="Path to the config file.")
+
+    # Read arguments from command line
     input_params = parser.parse_args()
+    
+    # if input_params.config:
+    #     tqdm.write("config: %s" % input_params.path)
+
+    config.param_path = input_params.config if input_params.config else join((dirname(__file__)), "config.ini")
     
     
     if input_params.type == "l":
@@ -524,3 +532,6 @@ if __name__ == "__main__":
         mgf_dir = config.get_config(section="search", key="mgf_dir")
         prep_dir = config.get_config(section="search", key="prep_path")
         preprocess_mgfs_unlabelled(mgf_dir, prep_dir)
+
+if __name__ == "__main__":
+    main()

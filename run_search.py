@@ -20,6 +20,7 @@ from src.atlespredict import (
     specollate_model,
 )
 from src.atlestrain import model
+import read_spectra
 
 if not os.path.exists("output_dir"):
     os.mkdir("output_dir")
@@ -54,7 +55,9 @@ def run_atles(rank, spec_loader):
     )
 
 
-def run_specollate_par(rank, world_size):
+def run_specollate_par(rank, world_size, gConfig):
+    config.param_path = gConfig
+
     setup(rank, world_size)
     # rank = config.get_config(key="rank", section="input")
     if torch.cuda.is_available():
@@ -74,6 +77,7 @@ def run_specollate_par(rank, world_size):
 
     prep_path = config.get_config(section="search", key="prep_path")
     spec_batch_size = config.get_config(key="spec_batch_size", section="search")
+    print(prep_path)
     spec_dataset = specdataset.SpectraDataset(join(prep_path, "specs.pkl"))
     spec_loader = torch.utils.data.DataLoader(
         dataset=spec_dataset,
@@ -277,6 +281,8 @@ def run_specollate_par(rank, world_size):
 def setup(rank, world_size):
     os.environ["MASTER_ADDR"] = "localhost"
     os.environ["MASTER_PORT"] = str(config.get_config(key="master_port", section="input"))
+
+    print('---')
     torch.cuda.set_device(rank)
     dist.init_process_group(backend="nccl", world_size=world_size, rank=rank)
 
@@ -287,17 +293,29 @@ if __name__ == "__main__":
     # Adding optional argument
     parser.add_argument("-c", "--config", help="Path to the config file.")
     parser.add_argument("-p", "--preprocess", help="Preprocess data?", default="True")
+    parser.add_argument("-u", "--use", help="Select GPU or CPU, default CPU")
 
     # Read arguments from command line
     input_params = parser.parse_args()
+    
+    print("--- Processing Spectre ---")
+    read_spectra.main()
 
-    if input_params.config:
-        tqdm.write("config: %s" % input_params.path)
+
+    # device = 'cpu'
+    # if(input_params.use and input_params.use.lower() == 'gpu'):
+    #     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu') 
+    
+    # print(f"-------- Using {device} --------")
+
+
+    # if input_params.config:
+    #     tqdm.write("config: %s" % input_params.path)
+
     config.param_path = input_params.config if input_params.config else join((dirname(__file__)), "config.ini")
 
     num_gpus = torch.cuda.device_count()
     print("Num GPUs: {}".format(num_gpus))
     start_time = time.time()
-    num_gpus = 2
-    mp.spawn(run_specollate_par, args=(num_gpus,), nprocs=num_gpus, join=True)
+    mp.spawn(run_specollate_par, args=(num_gpus, config.param_path), nprocs=num_gpus, join=True)
     print("Total time: {}".format(time.time() - start_time))
