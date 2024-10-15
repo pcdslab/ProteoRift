@@ -111,8 +111,9 @@ def get_all_config():
     global config_dict
 
     # If file path is given use it otherwise use default.
-    print("param_path: ", param_path)
+    print("param_path: ", param_path if param_path else DEFAULT_PARAM_PATH)
     file_path = param_path if param_path else DEFAULT_PARAM_PATH
+
 
     # Read config and convert each value to appropriate type.
     config_dict = {}
