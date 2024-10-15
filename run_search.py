@@ -20,6 +20,7 @@ from src.atlespredict import (
     specollate_model,
 )
 from src.atlestrain import model
+import read_spectra
 
 if not os.path.exists("output_dir"):
     os.mkdir("output_dir")
@@ -297,17 +298,20 @@ if __name__ == "__main__":
     # Read arguments from command line
     input_params = parser.parse_args()
     
+    print("--- Processing Spectre ---")
+    read_spectra.main()
 
-    device = 'cpu'
-    if(input_params.use and input_params.use.lower() == 'gpu'):
-        device = torch.device('cuda' if torch.cuda.is_available() else 'cpu') 
+
+    # device = 'cpu'
+    # if(input_params.use and input_params.use.lower() == 'gpu'):
+    #     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu') 
     
-    print(f"-------- Using {device} --------")
+    # print(f"-------- Using {device} --------")
 
-    if input_params.config:
-        tqdm.write("config: %s" % input_params.path)
 
-    config_path = input_params.config if input_params.config else join((dirname(__file__)), "config.ini")
+    # if input_params.config:
+    #     tqdm.write("config: %s" % input_params.path)
+
     config.param_path = input_params.config if input_params.config else join((dirname(__file__)), "config.ini")
 
     num_gpus = torch.cuda.device_count()
