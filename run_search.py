@@ -27,15 +27,23 @@ if not os.path.exists("output_dir"):
 
 
 def run_atles(rank, spec_loader):
-    model_ = model.Net().to(rank)
-    model_ = nn.parallel.DistributedDataParallel(model_, device_ids=[rank])
+    device = torch.device(f"cuda:{rank}" if torch.cuda.is_available() else "cpu")
+
+    model_ = model.Net().to(device)
+
+    if(torch.cuda.is_available()):
+        model_ = nn.parallel.DistributedDataParallel(model_, device_ids=[rank])
+    else:
+        model_ = nn.parallel.DistributedDataParallel(model_)
+
     # model_.load_state_dict(torch.load('atles-out/16403437/models/pt-mass-ch-16403437-1toz70vi-472.pt')['model_state_dict'])
     # model_.load_state_dict(torch.load(
     #     '/lclhome/mtari008/DeepAtles/atles-out/123/models/pt-mass-ch-123-2zgb2ei9-385.pt'
     #     )['model_state_dict'])
     model_.load_state_dict(
         torch.load(
-            config.get_config(key="model_name", section="search")
+            config.get_config(key="model_name", section="search"),
+            map_location=device
         )["model_state_dict"]
     )
     model_ = model_.module
@@ -283,8 +291,12 @@ def setup(rank, world_size):
     os.environ["MASTER_PORT"] = str(config.get_config(key="master_port", section="input"))
 
     print('---')
-    torch.cuda.set_device(rank)
-    dist.init_process_group(backend="nccl", world_size=world_size, rank=rank)
+    if(torch.cuda.is_available()):
+        torch.cuda.set_device(rank)
+    else:
+        torch.cpu.set_device(rank)
+    
+    dist.init_process_group(backend=("nccl" if torch.cuda.is_available() else "gloo"), world_size=world_size, rank=rank)
 
 
 if __name__ == "__main__":
@@ -314,7 +326,7 @@ if __name__ == "__main__":
 
     config.param_path = input_params.config if input_params.config else join((dirname(__file__)), "config.ini")
 
-    num_gpus = torch.cuda.device_count()
+    num_gpus = torch.cuda.device_count() or torch.cpu.device_count()
     print("Num GPUs: {}".format(num_gpus))
     start_time = time.time()
     mp.spawn(run_specollate_par, args=(num_gpus, config.param_path), nprocs=num_gpus, join=True)
