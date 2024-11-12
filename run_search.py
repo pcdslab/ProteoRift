@@ -335,6 +335,8 @@ def setup(rank, world_size):
     
     dist.init_process_group(backend=("gloo" if os.name == "nt" or not torch.cuda.is_available() else "nccl"), world_size=world_size, rank=rank)
 
+import sys
+sys.stdout.reconfigure(line_buffering=True)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -346,10 +348,17 @@ if __name__ == "__main__":
 
     # Read arguments from command line
     input_params = parser.parse_args()
+
+    num_gpus = torch.cuda.device_count() or torch.cpu.device_count()
+    if(torch.cuda.is_available()):
+        print("Num GPUs: {}".format(num_gpus))
+    else:
+        print("Num CPUs: {}".format(num_gpus))
+
     
     print("--- Processing Spectre ---")
-    read_spectra.main()
 
+    read_spectra.main()
 
     # device = 'cpu'
     # if(input_params.use and input_params.use.lower() == 'gpu'):
@@ -364,13 +373,10 @@ if __name__ == "__main__":
     if(os.name == "nt"):
         os.environ["USE_LIBUV"] = "0"
 
+
     config.param_path = input_params.config if input_params.config else join((dirname(__file__)), "config.ini")
 
-    num_gpus = torch.cuda.device_count() or torch.cpu.device_count()
-    if(torch.cuda.is_available()):
-        print("Num GPUs: {}".format(num_gpus))
-    else:
-        print("Num CPUs: {}".format(num_gpus))
+    
     start_time = time.time()
     mp.spawn(run_specollate_par, args=(num_gpus, config.param_path), nprocs=num_gpus, join=True)
     print("Total time: {}".format(time.time() - start_time))
