@@ -29,17 +29,20 @@ if not os.path.exists("output_dir"):
 def run_atles(rank, spec_loader):
     device = torch.device(f"cuda:{rank}" if torch.cuda.is_available() else "cpu")
 
-    model_ = model.Net().to(device)
-
+    model_ = None
     if(torch.cuda.is_available()):
+        model_ = model.Net().to(rank)
         model_ = nn.parallel.DistributedDataParallel(model_, device_ids=[rank])
+        
     else:
+        model_ = model.Net().to(device)
         model_ = nn.parallel.DistributedDataParallel(model_)
 
     # model_.load_state_dict(torch.load('atles-out/16403437/models/pt-mass-ch-16403437-1toz70vi-472.pt')['model_state_dict'])
     # model_.load_state_dict(torch.load(
     #     '/lclhome/mtari008/DeepAtles/atles-out/123/models/pt-mass-ch-123-2zgb2ei9-385.pt'
     #     )['model_state_dict'])
+    print(device)
     model_.load_state_dict(
         torch.load(
             config.get_config(key="model_name", section="search"),
@@ -50,7 +53,13 @@ def run_atles(rank, spec_loader):
     model_.eval()
     print(model_)
 
-    lens, cleavs, mods = dbsearch.runAtlesModel(spec_loader, model_, rank)
+    lens, cleavs, mods = None, None, None
+
+    if torch.cuda.is_available():
+        lens, cleavs, mods = dbsearch.runAtlesModel(spec_loader, model_, rank)  
+    else:
+        lens, cleavs, mods = dbsearch.runAtlesModel(spec_loader, model_, device)
+    
     pred_cleavs_softmax = torch.log_softmax(cleavs, dim=1)
     _, pred_cleavs = torch.max(pred_cleavs_softmax, dim=1)
     pred_mods_softmax = torch.log_softmax(mods, dim=1)
@@ -114,8 +123,18 @@ def run_specollate_par(rank, world_size, gConfig):
     # model_name = "512-embed-2-lstm-SnapLoss2D-80k-nist-massive-no-mc-semi-r2r-18.pt"  # 28.975k
     model_name = config.get_config(key="specollate_model_path", section="search")
     print("Using model: {}".format(model_name))
-    snap_model = specollate_model.Net(vocab_size=30, embedding_dim=512, hidden_lstm_dim=512, lstm_layers=2).to(rank)
-    snap_model = nn.parallel.DistributedDataParallel(snap_model, device_ids=[rank])
+
+    device = torch.device(f"cuda:{rank}" if torch.cuda.is_available() else "cpu")
+
+    snap_model = None
+
+    if torch.cuda.is_available():
+        snap_model = specollate_model.Net(vocab_size=30, embedding_dim=512, hidden_lstm_dim=512, lstm_layers=2).to(rank)
+        snap_model = nn.parallel.DistributedDataParallel(snap_model, device_ids=[rank])  
+    else:
+        snap_model = specollate_model.Net(vocab_size=30, embedding_dim=512, hidden_lstm_dim=512, lstm_layers=2).to(device)
+        snap_model = nn.parallel.DistributedDataParallel(snap_model)
+
     # snap_model.load_state_dict(torch.load('models/32-embed-2-lstm-SnapLoss2-noch-3k-1k-152.pt')['model_state_dict'])
     # below one has 26975 identified peptides.
     # snap_model.load_state_dict(
@@ -126,20 +145,30 @@ def run_specollate_par(rank, world_size, gConfig):
     #     torch.load("models/hcd/512-embed-2-lstm-SnapLoss2D-inputCharge-80k-nist-massive-116.pt")["model_state_dict"]
     # )
     # snap_model.load_state_dict(torch.load("specollate-model/{}".format(model_name))["model_state_dict"])
-    snap_model.load_state_dict(torch.load("{}".format(model_name))["model_state_dict"])
+    snap_model.load_state_dict(torch.load("{}".format(model_name), map_location=device)["model_state_dict"])
 
     snap_model = snap_model.module
     snap_model.eval()
     print(snap_model)
 
     print("Processing spectra...")
-    e_specs = dbsearch.runSpeCollateModel(spec_loader, snap_model, "specs", rank)
+
+    e_specs = None
+    if(torch.cuda.is_available()):
+        e_specs = dbsearch.runSpeCollateModel(spec_loader, snap_model, "specs", rank)
+    else:
+        e_specs = dbsearch.runSpeCollateModel(spec_loader, snap_model, "specs", device)
     print("Spectra done!")
 
     dist.barrier()
 
     print("Processing {}...".format("Peptides" if rank == 0 else "Decoys"))
-    e_peps = dbsearch.runSpeCollateModel(pep_loader, snap_model, "peps", rank)
+
+    e_peps = None
+    if(torch.cuda.is_available()):
+        e_peps = dbsearch.runSpeCollateModel(pep_loader, snap_model, "peps", rank)
+    else:
+        e_peps = dbsearch.runSpeCollateModel(pep_loader, snap_model, "peps", device)
     print("Peptides done!")
 
     dist.barrier()
@@ -214,9 +243,17 @@ def run_specollate_par(rank, world_size, gConfig):
                 shuffle=False,
             )
             unfiltered_start_time = time.time()
-            l_spec_inds, l_pep_inds, l_psm_vals = dbsearch.filtered_parallel_search(
-                search_loader, pep_dataset.filt_dict[pep_key], rank
-            )
+            
+            l_spec_inds, l_pep_inds, l_psm_vals = None, None, None
+            
+            if(torch.cuda.is_available()):
+                l_spec_inds, l_pep_inds, l_psm_vals = dbsearch.filtered_parallel_search(
+                    search_loader, pep_dataset.filt_dict[pep_key], rank
+                )
+            else:
+                l_spec_inds, l_pep_inds, l_psm_vals = dbsearch.filtered_parallel_search(
+                    search_loader, pep_dataset.filt_dict[pep_key], device
+                )
             unfiltered_time += time.time() - unfiltered_start_time
 
             if not l_spec_inds:
