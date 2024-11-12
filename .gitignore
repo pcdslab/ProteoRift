@@ -20,4 +20,4 @@ run_search.dist
 run_search.onefile-build
 ProteoRift
 preprocess_files
-output_dir
+output_dir/*
