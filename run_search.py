@@ -333,7 +333,7 @@ def setup(rank, world_size):
     else:
         torch.cpu.set_device(rank)
     
-    dist.init_process_group(backend=("nccl" if torch.cuda.is_available() else "gloo"), world_size=world_size, rank=rank)
+    dist.init_process_group(backend=("gloo" if os.name == "nt" or not torch.cuda.is_available() else "nccl"), world_size=world_size, rank=rank)
 
 
 if __name__ == "__main__":
@@ -361,10 +361,16 @@ if __name__ == "__main__":
     # if input_params.config:
     #     tqdm.write("config: %s" % input_params.path)
 
+    if(os.name == "nt"):
+        os.environ["USE_LIBUV"] = "0"
+
     config.param_path = input_params.config if input_params.config else join((dirname(__file__)), "config.ini")
 
     num_gpus = torch.cuda.device_count() or torch.cpu.device_count()
-    print("Num GPUs: {}".format(num_gpus))
+    if(torch.cuda.is_available()):
+        print("Num GPUs: {}".format(num_gpus))
+    else:
+        print("Num CPUs: {}".format(num_gpus))
     start_time = time.time()
     mp.spawn(run_specollate_par, args=(num_gpus, config.param_path), nprocs=num_gpus, join=True)
     print("Total time: {}".format(time.time() - start_time))
