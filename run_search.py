@@ -74,7 +74,8 @@ def run_atles(rank, spec_loader):
 
 def run_specollate_par(rank, world_size, gConfig):
     config.param_path = gConfig
-
+    config.Mods = config.get_config(key="ptm_mods", section="search")    
+    
     setup(rank, world_size)
     # rank = config.get_config(key="rank", section="input")
     if torch.cuda.is_available():
