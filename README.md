@@ -1,11 +1,15 @@
+[![HuggingFace](https://img.shields.io/badge/HuggingFace-follow_us-FFD21E?style=flat&logo=huggingface&logoColor=000)](https://huggingface.co/SaeedLab/ProteoRift) [![PyPI - Python Version](https://img.shields.io/pypi/v/proteorift?logo=pypi&style=flat&color=blue)](https://pypi.org/project/proteorift/) [![Cite Us](https://img.shields.io/badge/Cite%20Us-Scientific%20Reports-white?style=flat)](https://doi.org/10.1038/s41598-026-43215-2) [![License: CC BY-NC-ND 4.0](https://img.shields.io/badge/License-CC%20BY--NC--ND%204.0-lightgray.svg)](#proteorift)
+
 # ProteoRift
-## End-to-end machine-learning pipeline for peptide database search. 
+
+## End-to-end deep attention-based multitask pipeline for predicting uncertainty-quantified peptide properties from mass spectrometry data
 
 ProteoRift utlizes attention and multitask deep-network which can predict multiple peptide properties (length, missed cleavages, and modification status) directly from spectra. We demonstrate that ProteoRift can predict these properties with up to 97% accuracy resulting in search-space reduction by more than 90%. As a result, our end-to-end pipeline, utlizing Specollate as the underlying engine, is shown to exhibit 8x to 12x speedups with peptide deduction accuracy comparable to algorithmic techniques. 
 
 ## Citation
 If you use ProteoRift in your work, please cite the following publications:
 
+Tariq, U., Shabbir, B. & Saeed, F. End-to-end deep attention-based multitask pipeline for predicting uncertainty-quantified peptide properties from mass spectrometry data. Sci Rep (2026). https://doi.org/10.1038/s41598-026-43215-2
 
 Full documentation and further functionality are still a work in progress. A step-by-step how-to for training or running our trained version of ProteoRift on your data is available below. Please check back soon for an updated tool!
 
@@ -87,6 +91,3 @@ You can retrain the ProteoRift model if you wish.
 3. Setup the [wandb](https://wandb.ai/site) account. Create a project name `proteorift`. Then login to the project using `wandb login.` It would store the logs for training.
 4. Run `python read_spectra.py -t l`. It would preprocess the spectra files and split them (training, validation, test) and place in the prep_dir.
 5. Run the specollate_train file `python run_train.py`. The model weights would be saved in an output dir.
-
-
-
