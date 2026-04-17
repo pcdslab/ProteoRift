@@ -11,7 +11,7 @@ If you use ProteoRift in your work, please cite the following publications:
 
 Tariq, U., Shabbir, B. & Saeed, F. End-to-end deep attention-based multitask pipeline for predicting uncertainty-quantified peptide properties from mass spectrometry data. *Nature Scientific Reports* (2026). https://doi.org/10.1038/s41598-026-43215-2
 
-Full documentation and further functionality are still a work in progress. A step-by-step how-to for training or running our trained version of ProteoRift on your data is available below. Please check back soon for an updated tool!
+A step-by-step how-to for training or running our trained version of ProteoRift on your data is available below using conda. To perform the database search on your data using pip, please see the guide on [huggingface](https://huggingface.co/SaeedLab/ProteoRift).
 
 
 <!-- # Step-by-Step HOW TO
