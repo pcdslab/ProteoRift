@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools_scm>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "proteorift"
+version = "1.2.3"
+description = "End-to-end machine learning pipeline for peptide database search"
+readme = "readme_pypi.md"
+requires-python = ">=3.10"
+license = {file = "License.md"}
+authors = [
+    {name = "SaeedLab"},
+]
+keywords = ["proteomics", "peptide", "machine-learning", "bioinformatics"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+]
+
+dependencies = [
+    "torch>=1.10.0",
+    "numpy>=1.19.0",
+    "pandas>=1.3.0",
+    "scikit-learn>=0.24.0",
+    "tqdm>=4.62.0",
+    "huggingface-hub>=0.19.0",
+    "progressbar2>=3.53.0",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=6.0", "black>=21.0", "flake8>=3.9"]
+
+[project.urls]
+Homepage = "https://github.com/pcdslab/ProteoRift"
+Repository = "https://github.com/pcdslab/ProteoRift"
+
+[project.scripts]
+proteorift = "proteorift.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["proteorift*"]
+exclude = ["proteorift.egg-info*", "*.tests*"]
